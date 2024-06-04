@@ -39,3 +39,47 @@ MATLAB 提供了两个主要的工具箱来处理各种类型的优化问题：�
 - **全局优化工具箱**：适用于复杂、具有多个局部最优解的问题，如生物信息学、复杂系统建模和金融工程等。
 
 这两部分工具箱相辅相成，用户可以根据具体的优化需求选择合适的工具箱，以获得最佳的优化结果。
+
+# MATLAB `linprog` 函数介绍
+
+`linprog` 是 MATLAB 优化工具箱中的函数，用于求解线性规划问题。线性规划问题的标准形式如下：
+
+## 标准形式
+
+标准形式的线性规划问题可以表示为：
+
+\[ \min \mathbf{c}^T \mathbf{x} \]
+\[ \text{subject to } A \mathbf{x} \leq \mathbf{b}, \]
+\[ A_{eq} \mathbf{x} = \mathbf{beq}, \]
+\[ lb \leq \mathbf{x} \leq ub, \]
+
+其中：
+- \(\mathbf{c}\) 是目标函数的系数向量。
+- \(\mathbf{x}\) 是决策变量向量。
+- \(A\) 是不等式约束矩阵，\(\mathbf{b}\) 是不等式约束向量。
+- \(A_{eq}\) 是等式约束矩阵，\(\mathbf{beq}\) 是等式约束向量。
+- \(lb\) 是决策变量的下界，\(ub\) 是决策变量的上界。
+
+## 使用方法
+
+下面是一个使用 `linprog` 的基本示例：
+
+```matlab
+% 定义线性规划问题的参数
+f = [-1; -2];          % 目标函数的系数向量
+A = [1, 1; 1, -4; -1, -1];  % 不等式约束矩阵
+b = [2; 1; -1];        % 不等式约束向量
+Aeq = [];              % 等式约束矩阵
+beq = [];              % 等式约束向量
+lb = [0; 0];           % 变量的下界
+ub = [];               % 变量的上界
+
+% 调用 linprog 函数求解
+[x, fval, exitflag, output] = linprog(f, A, b, Aeq, beq, lb, ub);
+
+% 显示结果
+disp('Optimal solution:')
+disp(x)
+disp('Optimal objective value:')
+disp(fval)
+
