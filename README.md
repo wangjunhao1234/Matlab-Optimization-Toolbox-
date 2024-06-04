@@ -83,3 +83,54 @@ disp(x)
 disp('Optimal objective value:')
 disp(fval)
 
+## 使用限制
+
+使用 `linprog` 函数时，需要注意以下几点限制条件：
+
+1. **线性约束**：`linprog` 只能处理线性约束问题。如果你的问题包含非线性约束，则需要使用其他非线性规划求解器，例如 `fmincon`。
+2. **变量的上下界**：虽然 `linprog` 支持变量的上下界，但是这些上下界必须是线性的。如果需要处理复杂的变量约束，可能需要其他求解方法。
+3. **问题规模**：`linprog` 在处理非常大规模的线性规划问题时可能会遇到性能问题。虽然 MATLAB 已经针对大规模问题做了优化，但是对于极大规模的问题，可能需要专门的优化软件或算法。
+4. **算法选项**：`linprog` 提供了几种不同的算法（例如单纯形法、内点法），可以通过 `optimoptions` 函数进行配置。根据具体问题的特性，选择合适的算法可以提高求解效率。
+## 具体例子
+
+考虑一个生产计划问题，一个工厂生产两种产品 \(x_1\) 和 \(x_2\)，每种产品的利润分别为 1 元和 2 元。工厂有三种资源，资源1、资源2 和 资源3，每种资源的可用量分别为 2、1 和 1。生产每种产品所需的资源如下：
+
+- 产品 \(x_1\) 需要 1 单位的资源1 和 2 单位的资源3。
+- 产品 \(x_2\) 需要 1 单位的资源1 和 4 单位的资源2 和 1 单位的资源3。
+
+目标是最大化利润，具体线性规划问题可以表示为：
+
+\[ \min -\mathbf{c}^T \mathbf{x} = -x_1 - 2x_2 \]
+\[ \text{subject to } \]
+\[ x_1 + x_2 \leq 2, \]
+\[ x_1 - 4x_2 \leq 1, \]
+\[ -x_1 - x_2 \leq -1, \]
+\[ x_1, x_2 \geq 0. \]
+
+将上述问题转化为标准形式：
+
+\[ \min -\mathbf{c}^T \mathbf{x} = -\begin{bmatrix} 1 \\ 2 \end{bmatrix}^T \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} \]
+\[ \text{subject to } \]
+\[ \begin{bmatrix} 1 & 1 \\ 1 & -4 \\ -1 & -1 \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} \leq \begin{bmatrix} 2 \\ 1 \\ -1 \end{bmatrix}, \]
+\[ \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} \geq \begin{bmatrix} 0 \\ 0 \end{bmatrix}. \]
+
+这种问题可以使用 `linprog` 函数求解。具体使用方法如下：
+
+```matlab
+% 定义线性规划问题的参数
+f = [-1; -2];          % 目标函数的系数向量
+A = [1, 1; 1, -4; -1, -1];  % 不等式约束矩阵
+b = [2; 1; -1];        % 不等式约束向量
+Aeq = [];              % 等式约束矩阵
+beq = [];              % 等式约束向量
+lb = [0; 0];           % 变量的下界
+ub = [];               % 变量的上界
+
+% 调用 linprog 函数求解
+[x, fval, exitflag, output] = linprog(f, A, b, Aeq, beq, lb, ub);
+
+% 显示结果
+disp('Optimal solution:')
+disp(x)
+disp('Optimal objective value:')
+disp(fval)
